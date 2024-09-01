@@ -107,8 +107,9 @@ struct OnboardingLoginView: View {
     
     var body: some View {
         VStack {
-            TLogo(size: 64)
-                .padding(.bottom, 40)
+            TLogo(shape: Circle(),
+                  size: 64)
+            .padding(.bottom, 40)
             
             HStack {
                 Spacer()
