@@ -8,5 +8,5 @@
 import SwiftUI
 
 protocol ActionableView: View {
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ())
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ())
 }

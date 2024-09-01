@@ -9,26 +9,38 @@ import SwiftUI
 
 struct SideMenu: View {
     @Binding var isShowing: Bool
-    var content: AnyView
-    var edgeTransition: AnyTransition = .move(edge: .trailing)
+    var title: AnyView? = nil
+    let content: AnyView
+    let edge: Edge = .leading
+    
     var body: some View {
         ZStack(alignment: .bottom) {
             if (isShowing) {
-                Color.black
+                Custom.shared.color.black
                     .opacity(0.3)
                     .ignoresSafeArea()
                     .onTapGesture {
                         isShowing.toggle()
                     }
-                content
-                    .transition(edgeTransition)
-                    .background(
-                        Color.clear
-                    )
+                VStack() {
+                    if let title {
+                        title
+                            .padding(.bottom, 10)
+                    }
+                    content
+                }
+                .padding(.top, 80)
+                .transition(.move(edge: edge))
+                .background(
+                    Custom.shared.color.white
+                )
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+        .frame(maxWidth: .infinity,
+               maxHeight: .infinity,
+               alignment: .bottom)
         .ignoresSafeArea()
-        .animation(.easeInOut, value: isShowing)
+        .animation(.easeInOut, 
+                   value: isShowing)
     }
 }

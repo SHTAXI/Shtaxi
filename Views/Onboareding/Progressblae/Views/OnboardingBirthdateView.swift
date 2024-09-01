@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-class DateHolder: ObservableObject {
-    static var shared = DateHolder()
-    @Published var date: String = ""
-    private init(){}
-}
-
 struct OnboardingBirthdateView: OnboardingProgress {
     @State var date: String {
         didSet {
@@ -21,9 +15,9 @@ struct OnboardingBirthdateView: OnboardingProgress {
     }
     internal let onAppear: (() -> ())? = nil
     internal let complition: ((_ enable: Bool) -> ())?
-    internal let didSkip: (() -> ())? = nil
-    internal let vm: OnboardringViewModel? = OnboardringViewModel()
-    internal let holder = DateHolder.shared
+    internal let otherAction: ((any ActionableView) -> ())? = nil
+    internal let vm = OnboardringViewModel()
+    internal let holder = Holder<String>()
     
     @State private var error: Bool = false
     @State private var errorValue: String? = nil {
@@ -56,7 +50,7 @@ struct OnboardingBirthdateView: OnboardingProgress {
                     let newDate = "\(day)/\(month)/\(year)"
                     if newDate != date { errorValue = nil }
                     date = newDate
-                    holder.date = newDate
+                    holder.value = newDate
                     let dayValid = day.count == 2
                     let monthValid = month.count == 2
                     let yearValid = year.count == 4
@@ -66,7 +60,7 @@ struct OnboardingBirthdateView: OnboardingProgress {
                 
                 if let errorValue {
                     Text(errorValue)
-                        .foregroundStyle(Custom.shared.color.error)
+                        .foregroundStyle(Custom.shared.color.red)
                         .font(Custom.shared.font.textSmall)
                         .padding(.bottom, -5)
                 }
@@ -80,12 +74,14 @@ struct OnboardingBirthdateView: OnboardingProgress {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
         errorValue = nil
-        vm?.upload(id: profile.userID,
-                   birthdate: holder.date) { _ in
+        guard let profile else { return complete(false) }
+        guard let birthdate = holder.value else { return complete(false) }
+        vm.upload(id: profile.userID,
+                   birthdate: birthdate) { _ in
             manager.set(profile: profile,
-                        date: holder.date)
+                        date: birthdate)
             complete(true)
         } error: { error in
             print(error)

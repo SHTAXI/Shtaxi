@@ -89,6 +89,7 @@
 		4FF5AF4F2C83DC7000176585 /* ViewWithTransion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF5AF4E2C83DC7000176585 /* ViewWithTransion.swift */; };
 		4FF5AF512C83F23600176585 /* UserExistModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF5AF502C83F23600176585 /* UserExistModel.swift */; };
 		4FF5AF532C83F6B300176585 /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4FF5AF522C83F6B300176585 /* Storyboard.storyboard */; };
+		4FF5AF562C84B67100176585 /* ValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF5AF552C84B67100176585 /* ValueHolder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,6 +224,7 @@
 		4FF5AF4E2C83DC7000176585 /* ViewWithTransion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewWithTransion.swift; sourceTree = "<group>"; };
 		4FF5AF502C83F23600176585 /* UserExistModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserExistModel.swift; sourceTree = "<group>"; };
 		4FF5AF522C83F6B300176585 /* Storyboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
+		4FF5AF552C84B67100176585 /* ValueHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValueHolder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -283,7 +285,6 @@
 		4F0C27612C2D572000E3E73C /* TaxiShare_MVP */ = {
 			isa = PBXGroup;
 			children = (
-				4FF5AF522C83F6B300176585 /* Storyboard.storyboard */,
 				4FA762F72C80956D009F0E16 /* GoogleService-Info.plist */,
 				4F42EFD62C5FFF1D008DA7D1 /* TaxiShare_MVP.entitlements */,
 				4FD5E1102C5FC45200B38D0A /* TaxiShare-MVP-Info.plist */,
@@ -299,6 +300,7 @@
 				4FA3D1852C7A22070007527D /* Models */,
 				4FD5E0FE2C5ECB5F00B38D0A /* ViewModels */,
 				4F0C27942C2D579600E3E73C /* Views */,
+				4FF5AF522C83F6B300176585 /* Storyboard.storyboard */,
 				4F0C27622C2D572000E3E73C /* RoutingApp.swift */,
 				4FA3D1812C7A21CD0007527D /* AppDelegate.swift */,
 				4F0C276B2C2D572200E3E73C /* Persistence.swift */,
@@ -568,6 +570,7 @@
 			isa = PBXGroup;
 			children = (
 				4FF5AF4B2C83BDB800176585 /* LoginHendeler.swift */,
+				4FF5AF552C84B67100176585 /* ValueHolder.swift */,
 			);
 			path = Hendelers;
 			sourceTree = "<group>";
@@ -743,6 +746,7 @@
 				4F0C27992C2D579600E3E73C /* SingUpView.swift in Sources */,
 				4FD5E0D82C5E51A500B38D0A /* TButtonConfigItem.swift in Sources */,
 				4FD5E1002C5ECB8800B38D0A /* OnboardringViewModel.swift in Sources */,
+				4FF5AF562C84B67100176585 /* ValueHolder.swift in Sources */,
 				4FA3D1862C7A22070007527D /* FacebookAuthModel.swift in Sources */,
 				4FD5E10A2C5FA42F00B38D0A /* TButtonParams.swift in Sources */,
 				4FD5E1082C5FA3BF00B38D0A /* TSelectableButton.swift in Sources */,
@@ -951,7 +955,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TaxiShare_MVP/TaxiShare_MVP.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"TaxiShare_MVP/Preview Content\"";
 				DEVELOPMENT_TEAM = UNVTN9W8HQ;
 				ENABLE_PREVIEWS = YES;
@@ -983,7 +987,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = TaxiShare_MVP/TaxiShare_MVP.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"TaxiShare_MVP/Preview Content\"";
 				DEVELOPMENT_TEAM = UNVTN9W8HQ;
 				ENABLE_PREVIEWS = YES;

@@ -16,7 +16,7 @@ struct OnboardingProgressbaleContainerView: ViewWithTransition {
     
     @State internal var progreesSatge: Int = 0
     @State internal var loading = false
-    internal let vm: OnboardringViewModel = OnboardringViewModel()
+    internal let vm = OnboardringViewModel()
     
     let screens: [OnboardingProgressbale]
     @State private var buttonConfig: TButtonConfig = .defulat(state: .disabled,
@@ -30,25 +30,13 @@ struct OnboardingProgressbaleContainerView: ViewWithTransition {
             OnboaredingBaseView(buttonConfig: $buttonConfig,
                                 loading: $loading,
                                 buttonText: buttonText,
-                                contant: content) {
-                loading = true
-                guard let profile = profiles.last else {
-                    loading = false
-                    return
+                                contant: content) { preformAction(content: content) }
+                .environmentObject(manager)
+                .environment(\.managedObjectContext, manager.container.viewContext)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    hideKeyboard()
                 }
-                content.preformAction(manager: manager,
-                                      profile: profile) { valid in
-                    loading = false
-                    guard valid else { return }
-                    approveProgress()
-                }
-            }
-                                .environmentObject(manager)
-                                .environment(\.managedObjectContext, manager.container.viewContext)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    hideKeyboard()
-                                }
         }
     }
     
@@ -58,8 +46,24 @@ struct OnboardingProgressbaleContainerView: ViewWithTransition {
                                           buttonConfig: $buttonConfig,
                                           didDone: { router.navigateTo(.map) },
                                           onAppear: { setButtonConfig(isDone: true) },
-                                          complition: { enable in setButtonConfig(isDone: enable) },
-                                          didSkip: { approveProgress() })
+                                          complition: { isDone in setButtonConfig(isDone: isDone) },
+                                          otherAction: { content in preformAction(content: content) })
+    }
+    
+    private func preformAction(content: any ActionableView) {
+        loading = true
+        
+        guard let profile = profiles.last else {
+            loading = false
+            return
+        }
+        
+        content.preformAction(manager: manager,
+                              profile: profile) { valid in
+            loading = false
+            guard valid else { return }
+            approveProgress()
+        }
     }
     
     private func setButtonConfig(isDone: Bool) {

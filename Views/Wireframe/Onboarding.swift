@@ -10,5 +10,5 @@ import SwiftUI
 protocol OnboardingProgress: ActionableView {
     var onAppear: (() -> ())? { get }
     var complition: ((_ enable: Bool) -> ())? { get }
-    var didSkip: (() -> ())? { get }
+    var otherAction: ((_ content: any ActionableView) -> ())? { get }
 }

@@ -9,6 +9,7 @@ import Foundation
 
 class OnboardringViewModel: Network {
     private let auth = Authentication()
+    override var root: String { return "login" }
     
     func verifayPinCode(verificationID: String, code: String, complition: @escaping (_ id: String, _ name: String, _ email: String) -> (), error: @escaping (String?) -> ()) {
         auth.phoneVerify(verificationID: verificationID, verificationCode: code, phoneAuthModel: complition, error: error)
@@ -18,14 +19,19 @@ class OnboardringViewModel: Network {
         auth.phoneAuth(phone: phone, auth: complition, error: error)
     }
     
-    func getUser(id: String, complition: @escaping (UserExistModel) -> (), error: @escaping (String) -> ()) {
-        let parameters = ["id": id]
-        send(url: "login/getUser/", parameters: parameters, complition: complition, error: error)
-    }
-    
     func login(id: String, complition: @escaping (ProfileModel) -> (), error: @escaping (String) -> ()) {
         let parameters = ["id": id]
-        send(url: "login/", parameters: parameters, complition: complition, error: error)
+        send(url: path(""), parameters: parameters, complition: complition, error: error)
+    }
+    
+    func getUser(id: String, complition: @escaping (UserExistModel) -> (), error: @escaping (String) -> ()) {
+        let parameters = ["id": id]
+        send(url: path("get"), parameters: parameters, complition: complition, error: error)
+    }
+    
+    func delete(id: String, complition: @escaping (EmptyModel) -> (), error: @escaping (String) -> ()) {
+        let parameters = ["id": id]
+        send(url: path("delete"), parameters: parameters, complition: complition, error: error)
     }
     
     func upload(id: String?, email: String? = nil, phone: String? = nil, name: String? = nil, birthdate: String? = nil, gender: Int? = nil, rules: Bool? = nil, complition: @escaping (EmptyModel) -> (), error: @escaping (String) -> ()) {
@@ -53,6 +59,6 @@ class OnboardringViewModel: Network {
         }
         
         guard parameters.count > 1 else { return }
-        send(url: "login/update/", parameters: parameters, complition: complition, error: error)
+        send(url: path("update"), parameters: parameters, complition: complition, error: error)
     }
 }

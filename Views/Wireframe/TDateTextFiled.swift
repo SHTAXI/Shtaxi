@@ -97,7 +97,7 @@ struct TDateComponnet: View {
         VStack {
             TTextFiledView(label: label,
                            text: $text,
-                           textColor: error ? Custom.shared.color.error : .black,
+                           textColor: error ? Custom.shared.color.red : Custom.shared.color.black,
                            keyboardType: .numberPad,
                            textAlignment: .center) { _ in }
                 .onReceive(Just(text)) { _ in
@@ -105,7 +105,7 @@ struct TDateComponnet: View {
                     didType(text)
                 }
             ZStack {
-                error ? Custom.shared.color.error : Color.black
+                error ? Custom.shared.color.red : Custom.shared.color.black
             }
             .frame(height: 1)
         }

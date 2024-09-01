@@ -37,16 +37,18 @@ struct OnboaredingBaseView<Contant: View>: View {
             .ignoresSafeArea()
             .disabled(loading)
             
-            if loading {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .controlSize(.large)
-                    .tint(.blue)
-                    .frame(maxWidth: .infinity)
-                    .frame(maxHeight: .infinity)
-                    .ignoresSafeArea()
-            }
+            if loading { loadingView() }
         }
+    }
+    
+    @ViewBuilder private func loadingView() -> some View {
+        ProgressView()
+            .progressViewStyle(.circular)
+            .controlSize(.large)
+            .tint(.yellow.opacity(0.8))
+            .frame(maxWidth: .infinity)
+            .frame(maxHeight: .infinity)
+            .ignoresSafeArea()
     }
 }
 

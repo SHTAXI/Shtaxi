@@ -25,7 +25,7 @@ struct OnboardingProgressbaleManagerView: ActionableView {
     let didDone: () -> ()
     let onAppear: (() -> ())?
     let complition: ((_ enable: Bool) -> ())?
-    let didSkip: (() -> ())?
+    let otherAction: ((any ActionableView) -> ())?
     
     var body: some View {
         switch screens[progreesSatge] {
@@ -50,7 +50,7 @@ struct OnboardingProgressbaleManagerView: ActionableView {
                                                                      total: screens.count,
                                                                      content: .init(selectedIndex: value,
                                                                                     complition: complition,
-                                                                                    didSkip: didSkip),
+                                                                                    otherAction: otherAction),
                                                                      screen: { screen in oManager.content = screen })
             .environmentObject(manager)
             .environment(\.managedObjectContext, viewContext)
@@ -64,7 +64,7 @@ struct OnboardingProgressbaleManagerView: ActionableView {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
         oManager.content?.preformAction(manager: manager,
                                         profile: profile,
                                         complete: complete)

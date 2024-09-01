@@ -32,8 +32,8 @@ struct OnboardingChangePhoneView: ActionableView {
                     .padding(.leading, 24)
                 TTextFiledView(label: "הכנסת טלפון נייד",
                                text: $text,
-                               textColor: .black,
-                               keyboardType: .default, 
+                               textColor: Custom.shared.color.black,
+                               keyboardType: .default,
                                textAlignment: .trailing) { _ in }
                     .onReceive(Just(text)) { _ in
                         didType(!text.isEmpty)
@@ -41,7 +41,7 @@ struct OnboardingChangePhoneView: ActionableView {
                     .frame(maxWidth: .infinity)
             }
             ZStack {
-                Color.black
+                Custom.shared.color.black
             }
             .frame(height: 1)
             .padding(.bottom, 19)
@@ -52,7 +52,8 @@ struct OnboardingChangePhoneView: ActionableView {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
+        guard let profile else { return complete(false) }
         vm?.upload(id: profile.userID,
                    phone: text) { _ in
             complete(true)
@@ -62,8 +63,8 @@ struct OnboardingChangePhoneView: ActionableView {
     }
 }
 
-#Preview {
-    OnboardingChangePhoneView { _ in
-        
-    }
-}
+//#Preview {
+//    OnboardingChangePhoneView { _ in
+//        
+//    }
+//}

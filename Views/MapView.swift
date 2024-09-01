@@ -11,7 +11,8 @@ import MapKit
 struct MapView: ViewWithTransition {
     let transitionAnimation: Bool
     
-    @FetchRequest(sortDescriptors: []) private var profile: FetchedResults<Profile>
+    @EnvironmentObject private var manager: PersistenceController
+    @FetchRequest(sortDescriptors: []) private var profiles: FetchedResults<Profile>
     
     @StateObject var locationManager = LocationManager()
     
@@ -24,7 +25,8 @@ struct MapView: ViewWithTransition {
     @State private var isShowSideMenu: Bool = false
     @State private var isShowAlert: Bool = false
     @State private var anotations: [SearchCompletions] = []
-    @State private var viewModel: MapViewVM = MapViewVM()
+    @State private var viewModel = MapViewVM()
+    @State private var oVM = OnboardringViewModel()
     
     @State private var selection: Int?
     
@@ -51,7 +53,7 @@ struct MapView: ViewWithTransition {
     }
     
     private func profileImage() -> UIImage {
-        if let data = profile.last?.image {
+        if let data = profiles.last?.image {
             return UIImage(data: data)!
         }
         else {
@@ -111,7 +113,7 @@ struct MapView: ViewWithTransition {
                         }
                     }
                     .tag(anotations.firstIndex(of: result)!)
-                    .tint(result.confirmed ? Custom.shared.color.error : .white.opacity(0.6))
+                    .tint(result.confirmed ? Custom.shared.color.red : Custom.shared.color.white.opacity(0.6))
                 }
             }
             .onChange(of: selection) {
@@ -135,43 +137,29 @@ struct MapView: ViewWithTransition {
             
             ZStack {
                 VStack {
-                    Text("Taxi Share".localized())
+                    Text("Shtaxi".localized())
                         .font(.title)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Custom.shared.color.white)
                         .padding(.bottom, 8)
+                    
                     HStack {
-                        Image(uiImage: profileImage())
-                            .resizable()
-                            .frame(width: 50)
-                            .frame(height: 50)
-                            .background(.white)
-                            .clipShape(Circle())
-                            .onTapGesture {
-//                                navigateTo(route: .signup(isNew: false))
-                            }
+                        navigtionButton(label: {
+                            navigationButtonText("תפריט",
+                                                 bold: true)
+                        }) {
+                            isShowSideMenu.toggle()
+                        }
+                        
                         Spacer()
                         
-                        Button(action: {
-                            isShowSideMenu = true
-                        }, label: {
-                            Text("\("נסיעות")\n\(anotations.count)")
-                                .font(.caption2)
-                                .foregroundStyle(.black)
-                                .padding(.all, 8)
-                        })
-                        .frame(width: 50)
-                        .frame(height: 50)
-                        .background(.white)
-                        .clipShape(Circle())
-                        
-                        Button(action: {
+                        navigtionButton(label: {
+//                            Image("filter")
+//                                .resizable()
+                            navigationButtonText("פילטור")
+                        }) {
+                            isShowSideMenu = false
                             router.navigateTo(.filter)
-                        }, label: {
-                            Image("filter")
-                                .resizable()
-                        })
-                        .frame(width: 50)
-                        .frame(height: 50)
+                        }
                         .padding(.leading, 20)
                     }
                 }
@@ -180,7 +168,7 @@ struct MapView: ViewWithTransition {
                 .padding(.top, 58)
                 .padding(.bottom, 20)
             }
-            .background(.black.opacity(0.8))
+            .background(Custom.shared.color.black.opacity(0.8))
             .clipShape(UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: 10, bottomTrailing: 10)))
             .ignoresSafeArea()
             
@@ -197,31 +185,31 @@ struct MapView: ViewWithTransition {
             
             ZStack {
                 VStack {
-//                    TextFiledView(label: "איסוף", text: $startText, focus: { value in
-//                        guard value else { return }
-//                        locationService.completions = []
-//                        locationService.update(queryFragment: startText)
-//                    })
-//                    .padding(.top, 200)
-//                    .onChange(of: startText) {
-//                        locationService.update(queryFragment: startText)
-//                    }
-//                    .focused($startFocused)
+                    //                    TextFiledView(label: "איסוף", text: $startText, focus: { value in
+                    //                        guard value else { return }
+                    //                        locationService.completions = []
+                    //                        locationService.update(queryFragment: startText)
+                    //                    })
+                    //                    .padding(.top, 200)
+                    //                    .onChange(of: startText) {
+                    //                        locationService.update(queryFragment: startText)
+                    //                    }
+                    //                    .focused($startFocused)
                     
                     Image("downArrow")
                         .resizable()
                         .frame(height: 40)
                         .frame(width: 40)
                     
-//                    TextFiledView(label: "יעד", text: $endText) { value in
-//                        guard value else { return }
-//                        locationService.completions = []
-//                        locationService.update(queryFragment: endText)
-//                    }
-//                    .onChange(of: endText) {
-//                        locationService.update(queryFragment: endText)
-//                    }
-//                    .focused($endFocused)
+                    //                    TextFiledView(label: "יעד", text: $endText) { value in
+                    //                        guard value else { return }
+                    //                        locationService.completions = []
+                    //                        locationService.update(queryFragment: endText)
+                    //                    }
+                    //                    .onChange(of: endText) {
+                    //                        locationService.update(queryFragment: endText)
+                    //                    }
+                    //                    .focused($endFocused)
                 }
             }
             .ignoresSafeArea()
@@ -236,31 +224,14 @@ struct MapView: ViewWithTransition {
                 }
             }
             
-            SideMenu(isShowing: $isShowSideMenu, content:
-                        AnyView(List {
-                ForEach(anotations, id: \.self) { item in
-                    Button(action: {
-                        isShowSideMenu = false
-                        let l2d = CLLocationCoordinate2D(latitude: item.location!.coordinate.latitude, longitude: item.location!.coordinate.longitude)
-                        postion =  MapCameraPosition.region(MKCoordinateRegion(center: l2d, span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)))
-                        viewModel.sheetValue = anotations.firstIndex(of: item)
-                    }, label: {
-                        VStack(alignment: .leading) {
-                            Text(item.title)
-                                .font(.largeTitle)
-                                .foregroundStyle(.black)
-                            Text(item.subTitle)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    })
-                }
-            }
-                            .padding(.top, 40)
-                            .padding(.bottom, 40)
-                               )
-            )
-            .padding(.leading, 100)
+            SideMenu(isShowing: $isShowSideMenu,
+                     title: AnyView(Text("תפריט".localized())
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Custom.shared.color.gray.opacity(0.6))
+                        .font(Custom.shared.font.title)),
+                     content: menuList())
+            .padding(.trailing, 100)
+            .ignoresSafeArea()
         }
         .alert("בקשה לנסיעה", isPresented: $isShowAlert, actions: {
             Button(action: {
@@ -277,7 +248,7 @@ struct MapView: ViewWithTransition {
             })
         }, message: {
             let text = {
-                if anotations.contains(where: { item in 
+                if anotations.contains(where: { item in
                     return item.title == viewModel.endPositionValue?.title }) {
                     return "קיימות נסיעות למקום זה\nהאם ברצונך ליצר אחת חדשה בכל זאת?"
                 }
@@ -297,7 +268,7 @@ struct MapView: ViewWithTransition {
                     Image(uiImage: profileImage())
                         .resizable()
                         .clipShape(Circle())
-                        .background(.white)
+                        .background(Custom.shared.color.white)
                         .frame(width: 40)
                         .frame(height: 40)
                 }
@@ -337,7 +308,102 @@ struct MapView: ViewWithTransition {
             .presentationDetents([.height(400)])
         }
     }
+    
+    @ViewBuilder private func menuList() -> AnyView {
+        AnyView(
+            List {
+                ForEach(1..<8, id: \.self) { i in
+                    menuItem(text: "אופצייה \(i)".localized(),
+                             config: .defulat(state: .regular(bold: false),
+                                              dimantions: .full)) {
+                        isShowSideMenu = false
+                    }
+                }
+                
+                menuItem(text: "התנתקות".localized(),
+                         config: .defulat(state: .regular(bold: true),
+                                          dimantions: .full)) {
+                    isShowSideMenu = false
+                    if let profile = profiles.last { manager.delete(profile: profile) }
+                    router.popToRoot()
+                }
+                                          .padding(.top, 5)
+                
+                VStack {
+                    separator()
+                    
+                    menuItem(text: "מחיקת פרופיל".localized(),
+                             config: .defulat(state: .critical,
+                                              dimantions: .full)) {
+                        isShowSideMenu = false
+                        guard let profile = profiles.last else { return  router.popToRoot() }
+                        guard let id = profile.userID else { return  router.popToRoot() }
+                        oVM.delete(id: id) { _ in
+                            manager.delete(profile: profile)
+                            router.popToRoot()
+                        } error: { error in print(error) }
+                    }
+                                              .padding(.top, 10)
+                                              .padding(.bottom, 10)
+                }
+                .padding(.top, 5)
+            }
+        )
+    }
+    
+    @ViewBuilder private func navigationButtonText(_ text: String, bold: Bool = false) -> some View {
+        Text(text)
+            .padding(.all, 8)
+            .font( bold ? .caption2.bold() : .caption2)
+            .foregroundStyle(Custom.shared.color.black)
+    }
+    
+    @ViewBuilder private func navigtionButton(@ViewBuilder label: () -> some View, action: @escaping () -> ()) -> some View {
+        Button(action: {
+            action()
+        }, label: {
+            label()
+        })
+        .frame(width: 50)
+        .frame(height: 50)
+        .background(Custom.shared.color.white)
+        .clipShape(Circle())
+    }
+    
+    @ViewBuilder private func separator() -> some View {
+        ZStack {
+            Custom.shared.color.gray.opacity(0.3)
+        }
+        .frame(height: 1)
+        .frame(maxWidth: .infinity)
+    }
+    
+    @ViewBuilder private func menuItem(text: String, config: TButtonConfig, didTap: @escaping () -> ()) -> some View {
+        TButton(text: text,
+                config: config) {
+            didTap()
+        }
+                .listRowSeparator(.hidden)
+    }
 }
+
+//                ForEach(anotations, id: \.self) { item in
+//                    Button(action: {
+//                        isShowSideMenu = false
+//                        let l2d = CLLocationCoordinate2D(latitude: item.location!.coordinate.latitude, longitude: item.location!.coordinate.longitude)
+//                        postion =  MapCameraPosition.region(MKCoordinateRegion(center: l2d, span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)))
+//                        viewModel.sheetValue = anotations.firstIndex(of: item)
+//                    }, label: {
+//                        VStack(alignment: .leading) {
+//                            Text(item.title)
+//                                .font(.largeTitle)
+//                                .foregroundStyle(.black)
+//                            Text(item.subTitle)
+//                                .font(.subheadline)
+//                                .foregroundStyle(.secondary)
+//                        }
+//                    })
+//                }
 
 #Preview {
     MapView(transitionAnimation: false)

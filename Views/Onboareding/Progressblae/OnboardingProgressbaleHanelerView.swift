@@ -34,7 +34,7 @@ struct OnboardingProgressbaleHandelerView<Content: OnboardingProgress>: Actionab
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
         content?.preformAction(manager: manager,
                                profile: profile, 
                                complete: complete)

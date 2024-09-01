@@ -15,8 +15,7 @@ struct ProfileModel: Codable {
     let birthdate: String
     let gender: String
     let rules: Bool
-    let isNew: Bool
     
-    static let emptyUser = ProfileModel(id: "", email: "", phone: "", name: "", birthdate: "", gender: "", rules: false, isNew: true)
-    static let userWithData = ProfileModel(id: "123456", email: "a@a.com", phone: "052-2126345", name: "a", birthdate: "11/11/1900", gender: "0", rules: true, isNew: false)
+    static let emptyUser = ProfileModel(id: "", email: "", phone: "", name: "", birthdate: "", gender: "", rules: false)
+    static let userWithData = ProfileModel(id: "123456", email: "a@a.com", phone: "052-2126345", name: "a", birthdate: "11/11/1900", gender: "0", rules: true)
 }

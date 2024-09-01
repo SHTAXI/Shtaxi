@@ -16,9 +16,9 @@ struct SmsPinCodeView: ActionableView {
     @State var verificationID: String
     let onAppear: (SmsPinCodeView) -> ()
     let didDone: (Bool) -> ()
-    let didApprove: (_ id: String, _ name: String, _ email: String) -> ()
+    let didApprove: (_ id: String, _ name: String, _ email: String, _ didLogin: @escaping (_ profile: Profile,  _ uploadSuccess: @escaping (Bool) -> ()) -> ()) -> ()
     
-    internal let vm: OnboardringViewModel? = OnboardringViewModel()
+    internal let vm = OnboardringViewModel()
     @State private var holder = SmsPinCodeHolder()
     @State private var error: Bool = false
     @State private var errorValue: String? = nil {
@@ -67,7 +67,7 @@ struct SmsPinCodeView: ActionableView {
                 
                 if let errorValue {
                     Text(errorValue)
-                        .foregroundStyle(Custom.shared.color.error)
+                        .foregroundStyle(Custom.shared.color.red)
                         .font(Custom.shared.font.textSmall)
                         .padding(.bottom, -5)
                 }
@@ -82,7 +82,7 @@ struct SmsPinCodeView: ActionableView {
             
             Button(action: {
                 errorValue = nil
-                vm?.phoneAuth(phone: phone) { id in
+                vm.phoneAuth(phone: phone) { id in
                     verificationID = id
                 } error: { err in
                     errorValue = nil
@@ -101,27 +101,27 @@ struct SmsPinCodeView: ActionableView {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
         errorValue = nil
-        vm?.verifayPinCode(verificationID: verificationID,
-                           code: holder.pinCode) { id, name, email in
-            vm?.upload(id: profile.userID,
-                       phone: phone) { _ in
+        vm.verifayPinCode(verificationID: verificationID,
+                          code: holder.pinCode) { id, name, email in
+            complete(true)
+            didApprove(id, name, email) { profile, success in
                 
-                manager.set(profile: profile,
-                            phone: phone)
                 manager.set(profile: profile,
                             name: name)
-                manager.set(profile: profile,
-                            email: email)
                 
-                didApprove(id, name, email)
-                
-                complete(true)
-            } error:  { err in
-                print(err)
-                errorValue = err
-                complete(false)
+                vm.upload(id: profile.userID,
+                          phone: phone) { _ in
+                    
+                    manager.set(profile: profile,
+                                phone: phone)
+                    
+                    success(false)
+                } error: { err in
+                    print(err)
+                    success(false)
+                }
             }
         } error: { err in
             if let err { print(err) }

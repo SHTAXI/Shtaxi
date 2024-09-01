@@ -16,6 +16,7 @@ struct RootView: ViewWithTransition {
     
     @State private var logoSize = CGSize(width: 1,
                                      height: 1)
+    @State private var logoOpticity = 1.00
     
     private let vm = OnboardringViewModel()
     
@@ -24,10 +25,13 @@ struct RootView: ViewWithTransition {
               size: 128)
         .scaleEffect(logoSize,
                      anchor: .center)
+        .opacity(logoOpticity)
+        .navigationBarBackButtonHidden()
         .onAppear {
-            withAnimation(.interactiveSpring(duration: 1.4).repeatForever(autoreverses: true)) {
-                logoSize.width = 2
-                logoSize.height = 2
+            withAnimation(.interactiveSpring(duration: 1.5).repeatForever(autoreverses: true)) {
+                logoSize.width = 1.4
+                logoSize.height = 1.4
+                logoOpticity = 0.6
             }
             
             let profile = profiles.last
@@ -37,12 +41,9 @@ struct RootView: ViewWithTransition {
             .preform(id: profile?.userID,
                      name: "",
                      email: "",
-                     brithdate: "",
+                     birthdate: "",
                      gender: "")
         }
     }
 }
 
-#Preview {
-    RootView()
-}

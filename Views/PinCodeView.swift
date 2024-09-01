@@ -32,17 +32,15 @@ struct PinCodeView: ViewWithTransition {
                             buttonText: "אישור".localized(),
                             contant: smsPinCodeView()) {
             loading = true
-            guard let profile = profiles.last else {
-                loading = false
-                return
-            }
+            
             pManager.content?.preformAction(manager: manager,
-                                            profile: profile) { _ in loading = false }
+                                            profile: nil) { value in loading = false }
         }
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 hideKeyboard()
                             }
+        
     }
     
     @ViewBuilder private func smsPinCodeView() -> some View {
@@ -51,21 +49,28 @@ struct PinCodeView: ViewWithTransition {
             pManager.content = view
         } didDone: { value in
             setButtonConfig(isDone: value)
-        } didApprove: { id, name, email in
-            didApprove(id, name, email)
+        } didApprove: { id, name, email, didLogin in
+            didApprove(id, name, email, didLogin)
         }
     }
     
-    private func didApprove(_ id: String, _ name: String, _ email: String) {
+    private func didApprove(_ id: String, _ name: String, _ email: String, _ didLogin:  @escaping (_ profile: Profile,  _ uploadSuccess: @escaping (Bool) -> ()) -> ()) {
         LoginHendeler(router: router,
                       manager: manager,
                       profile:  profiles.last)
         .preform(id: id,
                  name: name,
                  email: email,
-                 brithdate: "",
-                 gender: "")
-        
+                 birthdate: "",
+                 gender: "") { value in
+            guard let profile = profiles.last else { return loading = false }
+            didLogin(profile) { didUploadSucceed in
+                guard didUploadSucceed else {
+                    manager.delete(profile: profile)
+                    return router.popToRoot()
+                }
+            }
+        }
     }
     
     private func setButtonConfig(isDone: Bool) {

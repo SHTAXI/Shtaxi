@@ -80,7 +80,7 @@ struct FilterView: ViewWithTransition {
                                 } label: {
                                     Text(Gender(rawValue: values[index])!.string)
                                         .font(.title2)
-                                        .foregroundStyle(.black)
+                                        .foregroundStyle(Custom.shared.color.black)
                                         .frame(maxWidth: .infinity)
                                 }
                                 .padding(.top, 4)

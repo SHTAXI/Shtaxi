@@ -10,8 +10,8 @@ import SwiftUI
 struct OnboardingRulesView: OnboardingProgress {    
     internal let onAppear: (() -> ())?
     internal let complition: ((_ enable: Bool) -> ())? = nil
-    internal let didSkip: (() -> ())? = nil
-    internal let vm: OnboardringViewModel? = OnboardringViewModel()
+    internal let otherAction: ((any ActionableView) -> ())? = nil
+    internal let vm = OnboardringViewModel()
     
     @EnvironmentObject var manager: PersistenceController
     @Environment(\.managedObjectContext) private var viewContext
@@ -75,8 +75,9 @@ struct OnboardingRulesView: OnboardingProgress {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
-        vm?.upload(id: profile.userID,
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
+        guard let profile else { return complete(false) }
+        vm.upload(id: profile.userID,
                    rules: true, complition: { _ in
             manager.set(profile: profile,
                         rules: true)
@@ -87,8 +88,8 @@ struct OnboardingRulesView: OnboardingProgress {
     }
 }
 
-#Preview {
-    OnboardingRulesView {
-        
-    }
-}
+//#Preview {
+//    OnboardingRulesView {
+//        
+//    }
+//}

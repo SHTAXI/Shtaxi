@@ -8,19 +8,13 @@
 import SwiftUI
 import Combine
 
-class NameHolder: ObservableObject {
-    static var shared = NameHolder()
-    @Published var name: String = ""
-    private init(){}
-}
-
 struct OnboardingNameView: OnboardingProgress {
     @State var text: String
     internal let onAppear: (() -> ())? = nil
     internal let complition: ((_ enable: Bool) -> ())?
-    internal let didSkip: (() -> ())? = nil
+    internal let otherAction: ((any ActionableView) -> ())? = nil
     internal let vm = OnboardringViewModel()
-    internal let holder = NameHolder.shared
+    internal let holder = Holder<String>()
     
     enum NameFiled: Int, Hashable {
         case name
@@ -39,18 +33,18 @@ struct OnboardingNameView: OnboardingProgress {
             
             TTextFiledView(label: "הכנסת שם פרטי",
                            text: $text,
-                           textColor: .black,
+                           textColor: Custom.shared.color.black,
                            keyboardType: .default,
                            textAlignment: .trailing) { _ in }
                 .onReceive(Just(text)) { _ in
-                    holder.name = text
+                    holder.value = text
                     complition?(!text.isEmpty)
                 }
                 .focused($focusedField, equals: .name)
                 .padding(.trailing, 24)
             
             ZStack {
-                Color.black
+                Custom.shared.color.black
             }
             .frame(height: 1)
             .padding(.bottom, 20)
@@ -65,11 +59,13 @@ struct OnboardingNameView: OnboardingProgress {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
+        guard let profile else { return complete(false) }
+        guard let name = holder.value else { return complete(false) }
         vm.upload(id: profile.userID,
-                  name: holder.name) { _ in
+                  name: name) { _ in
             manager.set(profile: profile,
-                        name: holder.name)
+                        name: name)
             complete(true)
         } error: { error in
             print(error)

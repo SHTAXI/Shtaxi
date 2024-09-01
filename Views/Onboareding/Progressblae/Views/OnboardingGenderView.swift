@@ -7,12 +7,6 @@
 
 import SwiftUI
 
-class GenderHolder: ObservableObject {
-    static var shared = GenderHolder()
-    @Published var gender: Int?
-    private init(){}
-}
-
 struct OnboardingGenderView: OnboardingProgress {
     @State private var buttons: [TButtonParams] = {
         return [
@@ -29,14 +23,14 @@ struct OnboardingGenderView: OnboardingProgress {
     
     internal let onAppear: (() -> ())? = nil
     internal let complition: ((_ enable: Bool) -> ())?
-    internal let didSkip: (() -> ())?
-    internal let vm: OnboardringViewModel? = OnboardringViewModel()
-    internal let holder = GenderHolder.shared
+    internal let otherAction: ((any ActionableView) -> ())?
+    internal let vm = OnboardringViewModel()
+    internal let holder = Holder<Int>()
     
-    init(selectedIndex: Int?, complition: ((_ enable : Bool) -> ())?, didSkip: (() -> ())?) {
+    init(selectedIndex: Int?, complition: ((_ enable : Bool) -> ())?, otherAction: ((any ActionableView) -> ())?) {
         self.selectedIndex = selectedIndex
         self.complition = complition
-        self.didSkip = didSkip
+        self.otherAction = otherAction
         
         for i in 0..<buttons.count {
             if i == selectedIndex {
@@ -66,7 +60,7 @@ struct OnboardingGenderView: OnboardingProgress {
                                 buttons[i].config = .defulat(state: .selectebale(selected: selected), 
                                                              dimantions: .full)
                                 selectedIndex = index
-                                holder.gender = index
+                                holder.value = index
                                 complition?(!button.title.isEmpty)
                             }
                         }
@@ -77,8 +71,8 @@ struct OnboardingGenderView: OnboardingProgress {
             
             Button(action: {
                 selectedIndex = -1
-                holder.gender = -1
-                didSkip?()
+                holder.value = -1
+                otherAction?(self)
             }, label: {
                 Text("לא רוצה להגדיר כרגע".localized())
                     .foregroundStyle(Custom.shared.color.tBlue)
@@ -93,11 +87,12 @@ struct OnboardingGenderView: OnboardingProgress {
         }
     }
     
-    func preformAction(manager: PersistenceController, profile: Profile, complete: @escaping (_ valid: Bool) -> ()) {
-        vm?.upload(id: profile.userID,
-                   gender: holder.gender) { _ in
+    func preformAction(manager: PersistenceController, profile: Profile?, complete: @escaping (_ valid: Bool) -> ()) {
+        guard let profile else { return complete(false) }
+        vm.upload(id: profile.userID,
+                   gender: holder.value) { _ in
             manager.set(profile: profile,
-                        gender: holder.gender)
+                        gender: holder.value)
             complete(true)
         } error: { error in
             print(error)

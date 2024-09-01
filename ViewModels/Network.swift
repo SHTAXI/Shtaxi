@@ -7,6 +7,14 @@
 
 import Foundation
 
+internal protocol Networkble: ObservableObject {
+    typealias UrlPathHolder = () -> (String)
+    typealias UrlPathMaker = (String) -> UrlPathHolder
+    
+    var root: String { get }
+    var path: UrlPathMaker { get }
+}
+
 internal enum HttpMethod: String {
     case post = "POST", get = "GET"
 }
@@ -24,8 +32,8 @@ internal class BaseUrl: ObservableObject {
     static var value: String {
         get {
 #if DEBUG
-            //            return "http://localhost:3000/"
-            return "https://shtaxi-server.onrender.com/"
+            return "http://localhost:3000/"
+            //            return "https://shtaxi-server.onrender.com/"
 #else
             return "https://shtaxi-server.onrender.com/"
 #endif
@@ -45,13 +53,14 @@ internal struct Request {
         case .post:
             let urlString = "\(base)\(url)"
             guard let url = URL(string: urlString) else { throw NetworkError.badUrl }
-            guard let body = try? JSONSerialization.data(withJSONObject: parameters) else { throw NetworkError.badUrl }
+            guard let httpBody = parameters.httpBody() else { throw NetworkError.badUrl }
             var request = URLRequest(url: url)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.setValue("application/json", forHTTPHeaderField: "Accept")
             request.httpMethod = method.rawValue
-            request.httpBody = body
+            request.httpBody = httpBody
             return request
+            
         case .get:
             var url = url
             if let keysValues = parameters.requestFormatted() {
@@ -68,10 +77,24 @@ internal struct Request {
     }
 }
 
-class Network: ObservableObject {
-    internal init() {}
+class Network: Networkble {
+    internal var root: String {
+        guard type(of: self) == Network.self else { fatalError("must override root in \(self)".replacingOccurrences(of: "TaxiShare_MVP.", with: "")) }
+        return ""
+    }
+    
+    internal var path: UrlPathMaker {
+        return { url in
+            { [weak self] in
+                guard let self else { return "" }
+                return "\(root)/\(url)"
+            }
+        }
+    }
     
     private let responedQueue = DispatchQueue.main
+    
+    internal init() {}
     
     private func send<T: Codable>(method: HttpMethod = .post, url: String, parameters: [String: Any] = [:], complition: @escaping (Response<T>) -> (), error: @escaping (Error) -> ()) {
         do {
@@ -118,8 +141,8 @@ class Network: ObservableObject {
 
 
 extension Network {
-    internal func send<T: Codable>(url: String, parameters: [String: Any] = [:], complition: @escaping (T) -> (), error: @escaping (String) -> ()) {
-        send(url: url, parameters: parameters) { [weak self] result in
+    internal func send<T: Codable>(url: UrlPathHolder, parameters: [String: Any] = [:], complition: @escaping (T) -> (), error: @escaping (String) -> ()) {
+        send(url: url(), parameters: parameters) { [weak self] result in
             guard let self else { return }
             responedQueue.async {
                 complition(result.value)

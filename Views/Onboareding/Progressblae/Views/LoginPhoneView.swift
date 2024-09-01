@@ -28,7 +28,7 @@ struct LoginPhoneView: View {
                     .padding(.all, 12)
                 TTextFiledView(label: "הכנסת טלפון נייד",
                                text: $text,
-                               textColor: .black,
+                               textColor: Custom.shared.color.black,
                                keyboardType: .numberPad,
                                textAlignment: .trailing) { _ in }
                     .onReceive(Just(text)) { _ in
@@ -39,7 +39,7 @@ struct LoginPhoneView: View {
             }
             .padding(.trailing, 24)
             ZStack {
-                Color.black
+                Custom.shared.color.black
             }
             .frame(height: 1)
             .padding(.bottom, 19)

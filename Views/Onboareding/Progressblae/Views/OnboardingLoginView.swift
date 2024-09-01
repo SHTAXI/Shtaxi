@@ -43,7 +43,7 @@ struct OnboardingLoginView: View {
         })
             .buttonStyle(LoginButtonStyle())
             .font(.title2.weight(.medium))
-            .foregroundStyle(.black)
+            .foregroundStyle(Custom.shared.color.black)
         
         return makeLoginButton(view: button)
     }
@@ -73,7 +73,7 @@ struct OnboardingLoginView: View {
         })
             .buttonStyle(LoginButtonStyle())
             .font(.title2.weight(.medium))
-            .foregroundStyle(.black)
+            .foregroundStyle(Custom.shared.color.black)
         
         return makeLoginButton(view: button)
     }
@@ -165,7 +165,7 @@ struct LoginButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background {
-                configuration.isPressed ? Color.gray.opacity(0.8) :
+                configuration.isPressed ? Custom.shared.color.gray.opacity(0.8) :
                 Color.clear
             }
             .overlay(
