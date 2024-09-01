@@ -1,0 +1,87 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "/" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@\n%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@\n%2$lld"
+          }
+        }
+      }
+    },
+    "%@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %lld/%lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$lld/%3$lld"
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "Lorem ipsum dolor sit amet consectetur. Pulvinar sed in dui auctor imperdiet posuere bibendum. Diam sit sed semper." : {
+
+    },
+    "בקשה לנסיעה" : {
+
+    },
+    "גבר" : {
+
+    },
+    "גיל" : {
+
+    },
+    "הבא" : {
+
+    },
+    "כדי להתאים את הנסיעות הנכונות עבורך אנחנו צריכים להבין מה תאריך הלידה שלך. בפרופיל נציג את הגיל שלך." : {
+
+    },
+    "לאישור והזנת פרטים לחץ" : {
+
+    },
+    "נוסעים" : {
+
+    },
+    "סינון" : {
+
+    },
+    "פרטים" : {
+
+    },
+    "שליחה חוזרת" : {
+
+    },
+    "שם" : {
+
+    },
+    "שמור" : {
+
+    },
+    "שעת יציאה:" : {
+
+    }
+  },
+  "version" : "1.0"
+}
