@@ -20,13 +20,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string></string>
-			<key>CFBundleURLSchemes</key>
-			<array/>
-		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>firebase</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>app-1-475395241430-ios-264726b2570d509d4e2077</string>
@@ -35,14 +29,14 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>google</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.475395241430-kbkq55418qemqkrbf613vrbsn85irc84</string>
 			</array>
 		</dict>
 	</array>
-	<key>CODE_SIGN_ALLOW_ENTITLEMENTS_MODIFICATION</key>
-	<string>YES</string>
 	<key>FacebookAdvertiserIDCollectionEnabled</key>
 	<string>YES</string>
 	<key>FacebookAppID</key>
@@ -51,24 +45,13 @@
 	<string>YES</string>
 	<key>FacebookClientToken</key>
 	<string>289cbf9e80f7acf4964b0cf96238dea8</string>
-	<key>FacebookDisplayName</key>
-	<string>Shtaxi</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>GIDClientID</key>
 	<string>com.googleusercontent.apps.475395241430-hpr1kug97olsfsaeeuj83hol0cbs029v</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fbapi</string>
-	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>NotoSans-Hebrew.ttf</string>
+		<string>NotoSansHebrew-VariableFont_wdth,wght.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
